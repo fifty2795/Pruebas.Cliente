@@ -1,0 +1,120 @@
+﻿@* @using Pruebas.Cliente.Utilidades
+@model ResponseViewModel<TblProducto>;
+
+<h1>Editar productos</h1>
+
+<form method="post" action="/Producto/EditarPrtoducto">
+
+    <div class="form-group row">
+        <input type="hidden" id="IdProducto" name="IdProducto" value="@ViewBag.IdProducto" />
+    </div>
+
+    <div class="form-row">
+        
+        <div class="form-group col-md-3">
+            <label for="lblNombre">Nombre:</label>
+            <input type="text" class="form-control" id="txtNombre" name="Nombre" value="@Model.Data.Nombre" required />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="lblApellidoPaterno"> Apellido Paterno:</label>
+            <input type="text" class="form-control" id="txtApellidoPaterno" name="ApellidoPaterno" value="@Model.Data.ApellidoPaterno" required />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="lblApellidoMaterno">Apellido Materno:</label>
+            <input type="text" class="form-control" id="txtApellidoMaterno" name="ApellidoMaterno" value="@Model.Data.ApellidoMaterno" required />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="lblIdentificacion">Identificacion:</label>
+            <input type="number" class="form-control" id="txtIdentificacion" name="Identificacion" value="@Model.Data.Identificacion" required />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="lblCargo">Cargo:</label>
+            <input type="text" class="form-control" id="txtCargo" name="Cargo" value="@Model.Data.Cargo" required />
+        </div>
+
+        <div class="form-group col-md-3">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="chkBoxActivo" name="Activo" @(Model.Data.Activo ? "checked" : "") value="true" />
+                <label class="form-check-label" for="chkBoxActivo">Activo</label>
+            </div>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label for="lblFechaCreacion">Fecha Creacion:</label>
+            <input type="text" class="form-control" id="txtFechaCreacion" name="FechaCreacion" value="@Model.Data.FechaCreacion" required />
+        </div>
+    </div>
+
+    <br />
+
+
+    <div class="form-group">
+        <div class="alert alert-success" id="successMensaje" style="display:none"></div>
+    </div>
+
+    <div class="form-group">
+        <div class="alert alert-danger" id="errorMensaje" style="display:none"></div>
+    </div>
+
+
+    @if (Model.Message != null)
+    {
+        <div class="form-group">
+            <div class="alert alert-success" id="successMensaje">@Model.Message</div>
+        </div>
+    }
+    else if (Model.Error.Message != null)
+    {
+        <div class="form-group">
+            <div class="alert alert-danger" id="errorMensaje">@Model.Error.Message</div>
+        </div>
+    }
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
+</form>
+
+
+@section Scripts {
+
+    <script>
+
+        $(document).ready(function () {
+            $('#txtFechaCreacion').datepicker({
+                dateFormat: 'dd-mm-yy',
+                autoclose: true
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var precio = document.getElementById('txtPrecio');
+            precio.addEventListener('keypress', function (event) {
+                validarNumerosDecimales(event, this); // Pasar el evento y el input actual
+            });
+        });
+
+        function validarFormulario() {
+            if (!validarPrecio()) {
+                return false;
+            }
+            return true;
+        }
+
+        function validarPrecio() {
+            var cantidad = document.getElementById('txtPrecio');
+            var result = ValidarNumerosDecimales(cantidad);
+
+            if (!result) {
+                alert('Por favor ingrese una Cantidad con un número entero o un número con exactamente 2 decimales.');
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+}
+ *@

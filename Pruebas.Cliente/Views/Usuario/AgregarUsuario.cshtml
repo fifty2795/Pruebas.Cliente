@@ -1,0 +1,75 @@
+﻿@model TblUsuario
+
+<h1>Agregar Usuario</h1>
+
+<form method="post" action="/Usuario/AgregarUsuario">    
+
+    <div class="form-row">
+
+        <div class="form-group col-md-3">
+            <label for="lblNombre">Nombre:</label>
+            <input type="text" class="form-control" id="txtNombre" name="Nombre" required />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="lblApellidoPaterno"> Apellido Paterno:</label>
+            <input type="text" class="form-control" id="txtApellidoPaterno" name="ApellidoPaterno"  required />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="lblApellidoMaterno">Apellido Materno:</label>
+            <input type="text" class="form-control" id="txtApellidoMaterno" name="ApellidoMaterno" required />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="lblIdentificacion">Identificacion:</label>
+            <input type="number" class="form-control" id="txtIdentificacion" name="Identificacion" required />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="lblCargo">Cargo:</label>
+            <input type="text" class="form-control" id="txtCargo" name="Cargo" required />
+        </div>
+
+        <div class="form-group col-md-3">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="chkBoxActivo" name="Activo" @(Model.Activo ? "checked" : "") value="true" />
+                <label class="form-check-label" for="chkBoxActivo">Activo</label>
+            </div>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label for="lblFechaCreacion">Fecha Creacion:</label>
+            <input type="text" class="form-control" id="txtFechaCreacion" name="FechaCreacion" required />
+        </div>
+    </div>
+
+    <br />
+
+
+    <div class="form-group">
+        <div class="alert alert-success" id="successMensaje" style="display:none"></div>
+    </div>
+
+    <div class="form-group">
+        <div class="alert alert-danger" id="errorMensaje" style="display:none"></div>
+    </div>
+
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+</form>
+
+@section Scripts {
+
+    <script>
+
+        $(document).ready(function () {
+            $('#txtFechaCreacion').datepicker({
+                dateFormat: 'dd-mm-yy',
+                autoclose: true
+            });
+        });        
+
+    </script>
+}

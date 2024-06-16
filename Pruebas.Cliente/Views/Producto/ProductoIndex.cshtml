@@ -1,0 +1,75 @@
+﻿@model IEnumerable<TblProducto>;
+
+<h1>Lista de Productos</h1>
+<br />
+
+<form asp-action="Index" method="get">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="lblNombreProducto">Nombre del Producto:</label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <input type="text" id="txtNombreProducto" name="nombreProducto" class="form-control" placeholder="Nombre de Producto" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <button class="btn btn-primary" id="btnBuscarProducto">Buscar</button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <input class="form-control" type="text" id="searchInput" placeholder="Ingrese término de búsqueda" />
+            </div>
+        </div>
+
+    </div>
+
+</form>
+
+<button id="btnAgregarProducto" class="btn btn-primary">Agregar Producto</button>
+
+<br />
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Detalle</th>
+            <th>Precio</th>
+            <th>cantidad</th>
+            <th>Fecha Creacion</th>
+            <th>Activo</th>
+            <td>Actualizar</td>
+            <td>Eliminar</td>
+            <!-- Agrega más columnas según las propiedades de TblProducto -->
+        </tr>
+    </thead>
+    <tbody id="userData">
+        @foreach (var producto in Model)
+        {
+            <tr>
+                <td>@producto.IdProducto</td>
+                <td>@producto.Nombre</td>
+                <td>@producto.Detalle</td>
+                <td>@producto.Precio</td>
+                <td>@producto.Cantidad</td>
+                <td>@producto.FechaCreacion</td>
+                <td>@producto.Activo</td>
+                <td>
+                    <a asp-controller="producto" asp-action="EditarProducto" asp-route-id="@producto.IdProducto">Actualizar</a>
+                </td>
+                <td>
+                    <a asp-controller="producto" asp-action="EliminarProducto" asp-route-id="@producto.IdProducto">Eliminar</a>
+                </td>
+                <!-- Agrega más columnas según las propiedades de TblUsuario -->
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,174 @@
+﻿@using Pruebas.Cliente.Utilidades
+@model ResponseViewModel<TblUsuario>;
+
+<h1>Lista de usuarios</h1>
+
+<form asp-action="Index" method="get">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="lblNombreUsuario">Nombre del Usuario:</label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <input type="text" id="txtNombreUsuario" name="nombreUsuario" class="form-control" placeholder="Nombre de Usuario" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <button class="btn btn-primary" id="btnBuscarUsuario">Buscar</button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <input class="form-control" type="text" id="searchInput" placeholder="Ingrese término de búsqueda" />
+            </div>
+        </div>
+
+    </div>
+
+</form>
+
+<br />
+
+<a asp-controller="Usuario" asp-action="AgregarUsuario" class="btn btn-primary">Agregar Usuario</a>
+
+<br />
+<br />
+
+<form asp-action="ExportarTabla" method="get">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">                
+                <button id="exportarBtn" class="btn btn-primary">Exportar a Excel</button>
+            </div>
+        </div>        
+    </div>
+</form>
+
+<br />
+
+<form id="importForm" enctype="multipart/form-data">
+    <div class="row">        
+        <div class="col-md-2">
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Importar Excel</button>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <input type="file" class="form-control" id="fileInput" name="fileInput" accept=".xlsx, .xls" />
+            </div>
+        </div>        
+    </div>
+</form>
+
+
+<table id="resultsTable" class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Identificacion</th>
+            <th>Cargo</th>
+            <th>Activo</th>
+            <th>Fecha Creacion</th>
+            <td>Actualizar</td>
+            <td>Eliminar</td>
+            <!-- Agrega más columnas según las propiedades de TblUsuario -->
+        </tr>
+    </thead>
+    <tbody id="userData">
+        @foreach (var usuario in Model.DataList)
+        {
+            <tr>
+                <td>@usuario.IdUsuario</td>
+                <td>@usuario.Nombre</td>
+                <td>@usuario.ApellidoPaterno</td>
+                <td>@usuario.ApellidoMaterno</td>
+                <td>@usuario.Identificacion</td>
+                <td>@usuario.Cargo</td>
+                <td>@usuario.Activo</td>
+                <td>@usuario.FechaCreacion</td>
+                <td>
+                    <a asp-controller="Usuario" asp-action="EditarUsuario" asp-route-id="@usuario.IdUsuario">Actualizar</a>
+                </td>
+                <td>
+                    <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-id="@usuario.IdUsuario">Eliminar</a>
+                </td>
+                <!-- Agrega más columnas según las propiedades de TblUsuario -->
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br />
+
+
+@if (Model.Message != null)
+{
+    <div class="form-group">
+        <div class="alert alert-success" id="successMensaje">@Model.Message</div>
+    </div>
+}
+else if (Model.Error.Message != null)
+{
+    <div class="form-group">
+        <div class="alert alert-danger" id="errorMensaje">@Model.Error.Message</div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+            var searchTerm = this.value.toLowerCase();
+            var table = document.getElementById('resultsTable');
+            var rows = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+                var cells = rows[i].getElementsByTagName('td');
+                var found = false;
+
+                for (var j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(searchTerm)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+
+        document.getElementById('importForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileInput');
+            formData.append('fileInput', fileInput.files[0]);
+
+            fetch('@Url.Action("ImportarExcel", "Usuario")', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Importación exitosa');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error en la importación');
+                });
+        });
+
+    </script>
+}
