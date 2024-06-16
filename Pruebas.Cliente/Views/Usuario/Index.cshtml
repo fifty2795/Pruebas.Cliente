@@ -6,7 +6,7 @@
 <form asp-action="Index" method="get">
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-1">
             <div class="form-group">
                 <label for="lblNombreUsuario">Nombre del Usuario:</label>
             </div>
@@ -21,49 +21,42 @@
                 <button class="btn btn-primary" id="btnBuscarUsuario">Buscar</button>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-5">
             <div class="form-group">
                 <input class="form-control" type="text" id="searchInput" placeholder="Ingrese término de búsqueda" />
             </div>
         </div>
-
     </div>
-
 </form>
 
 <br />
+<br />
+
 
 <a asp-controller="Usuario" asp-action="AgregarUsuario" class="btn btn-primary">Agregar Usuario</a>
 
 <br />
 <br />
 
-<form asp-action="ExportarTabla" method="get">
-    <div class="row">
-        <div class="col-md-2">
-            <div class="form-group">                
-                <button id="exportarBtn" class="btn btn-primary">Exportar a Excel</button>
-            </div>
-        </div>        
-    </div>
-</form>
-
-<br />
-
-<form id="importForm" enctype="multipart/form-data">
-    <div class="row">        
-        <div class="col-md-2">
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Importar Excel</button>
-            </div>
+<div class="row">
+    <!-- Formulario para exportar a Excel -->
+    <form asp-action="ExportarTabla" method="get" class="col-md-2">
+        <div class="form-group">
+            <button id="exportarBtn" class="btn btn-primary">Exportar a Excel</button>
         </div>
-        <div class="col-md-5">
+    </form>
+
+    <!-- Formulario para importar Excel -->
+    <form id="importForm" enctype="multipart/form-data" class="col-md-5">
+        <div class="form-group d-flex align-items-center">
+            <button class="btn btn-primary mr-3" type="submit">Importar Excel</button>
             <div class="form-group">
                 <input type="file" class="form-control" id="fileInput" name="fileInput" accept=".xlsx, .xls" />
-            </div>
-        </div>        
-    </div>
-</form>
+            </div>            
+        </div>
+    </form>
+</div>
+
 
 
 <table id="resultsTable" class="table">
@@ -93,7 +86,7 @@
                 <td>@usuario.Identificacion</td>
                 <td>@usuario.Cargo</td>
                 <td>@usuario.Activo</td>
-                <td>@usuario.FechaCreacion</td>
+                <td>@usuario.FechaCreacionDateOnly.ToShortDateString()</td>
                 <td>
                     <a asp-controller="Usuario" asp-action="EditarUsuario" asp-route-id="@usuario.IdUsuario">Actualizar</a>
                 </td>
@@ -121,6 +114,23 @@ else if (Model.Error.Message != null)
         <div class="alert alert-danger" id="errorMensaje">@Model.Error.Message</div>
     </div>
 }
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item @(Model.DataList.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link" href="?pageNumber=@(Model.DataList.PageIndex - 1)">Previous</a>
+        </li>
+        @for (int i = 1; i <= Model.DataList.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.DataList.PageIndex ? "active" : "")">
+                <a class="page-link" href="?pageNumber=@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.DataList.HasNextPage ? "" : "disabled")">
+            <a class="page-link" href="?pageNumber=@(Model.DataList.PageIndex + 1)">Next</a>
+        </li>
+    </ul>
+</nav>
 
 @section Scripts {
     <script>
@@ -164,10 +174,10 @@ else if (Model.Error.Message != null)
                     console.log('Success:', data);
                     alert('Importación exitosa');
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error en la importación');
-                });
+                // .catch(error => {
+                //     console.error('Error:', error);
+                //     alert('Error en la importación');
+                // });
         });
 
     </script>

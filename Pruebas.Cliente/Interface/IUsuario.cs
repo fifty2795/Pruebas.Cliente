@@ -1,10 +1,11 @@
 ﻿using Pruebas.Cliente.Models;
+using Pruebas.Cliente.Utilidades;
 
 namespace Pruebas.Cliente.Interface
 {
     public interface IUsuario
     {
-        public List<TblUsuario> ObtenerUsuarios(string? nombreUsuario);
+        public Task<PaginatedList<TblUsuario>> ObtenerUsuarios(string? nombreUsuario, int pageNumber, int pageSize);
 
         public TblUsuario ObtenerUsuarios(int idUsuario);
 

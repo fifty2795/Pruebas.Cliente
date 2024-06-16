@@ -6,9 +6,9 @@ namespace Pruebas.Cliente.Repositorio
 {
     public class Repositorio_Producto : IProducto
     {
-        private readonly PruebasContext _dbContext;
+        private readonly MvcContext _dbContext;
 
-        public Repositorio_Producto(PruebasContext dbContext)
+        public Repositorio_Producto(MvcContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -1,4 +1,6 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Irony.Parsing;
 using Microsoft.AspNetCore.Mvc;
 using Pruebas.Cliente.Interface;
 using Pruebas.Cliente.Models;
@@ -14,8 +16,15 @@ namespace Pruebas.Cliente.Controllers
         {
             _usuario = usuario;
         }
-        public IActionResult Index(string? nombreUsuario)
+        public async Task <IActionResult> Index(string? nombreUsuario, int pageNumber)
         {
+            int pageSize = 3;
+            
+            if(pageNumber == 0)
+            {
+                pageNumber = 1;
+            }
+            
             var response = new ResponseViewModel<TblUsuario>();
 
             try
@@ -25,18 +34,18 @@ namespace Pruebas.Cliente.Controllers
                     nombreUsuario = string.Empty;
                 }
 
-                var lstUsuario = _usuario.ObtenerUsuarios(nombreUsuario);
-
+                var lstUsuario = await _usuario.ObtenerUsuarios(nombreUsuario, pageNumber, pageSize);
+                
                 response.DataList = lstUsuario;
                 response.Message = "Usuarios encontrados";
 
-                return View(response);
+                return View(response);                
             }
             catch (Exception ex)
-            {
+            {                
                 var tblUsuario = new ResponseViewModel<TblUsuario>
                 {
-                    DataList = new List<TblUsuario?>(),
+                    DataList = new PaginatedList<TblUsuario?>(),
                     Error = new Utilidades.ErrorViewModel
                     {
                         Code = "ERROR_CODE",
@@ -154,8 +163,8 @@ namespace Pruebas.Cliente.Controllers
             try
             {
                 var response = new ResponseViewModel<TblUsuario>();
-
-                var lstUsuario = _usuario.ObtenerUsuarios(string.Empty);
+                
+                var lstUsuario = await _usuario.ObtenerUsuarios(string.Empty, 1, 1);
                 response.DataList = lstUsuario;
 
                 using (var workbook = new XLWorkbook())
@@ -234,35 +243,26 @@ namespace Pruebas.Cliente.Controllers
                                 continue;
                             }
 
-                            var usuario = new TblUsuario();
+                            var usuario = new TblUsuario();                            
 
-                            DateOnly fechaCreacion;
-                            if (row.Cell(8).TryGetValue(out DateTime fecha))
-                            {
-                                fechaCreacion = DateOnly.FromDateTime(fecha);
-                            }
-                            else
-                            {
-                                // Manejar el caso donde la celda no contiene un DateTime válido
-                                fechaCreacion = DateOnly.MinValue; // O cualquier valor predeterminado apropiado
-                            }
-
-                            usuario.IdUsuario = row.Cell(1).GetValue<int>();
+                            //usuario.IdUsuario = row.Cell(1).GetValue<int>();
                             usuario.Nombre = row.Cell(2).GetString();
                             usuario.ApellidoPaterno = row.Cell(3).GetString();
                             usuario.ApellidoMaterno = row.Cell(4).GetString();
                             usuario.Identificacion = row.Cell(5).GetValue<int>();
                             usuario.Cargo = row.Cell(6).GetString();
                             usuario.Activo = row.Cell(7).GetValue<bool>();
-                            usuario.FechaCreacion = fechaCreacion;
-                            
+
+                            string fecha = row.Cell(8).GetString();
+                            usuario.FechaCreacion = Convert.ToDateTime(fecha);
+
                             usuarios.Add(usuario);
                         }
                     }
                 }    
                 // Guardar los productos en la base de datos
                 _usuario.AgregarUsuarios(usuarios);
-                return View("Index", null);
+                return RedirectToAction("Index", null);
             }
             catch (Exception ex)
             {

@@ -8,7 +8,7 @@ namespace Pruebas.Cliente.Utilidades
         public string? Message { get; set; }
         public T? Data { get; set; }
 
-        public List<T?> DataList { get; set; }
+        public PaginatedList<T?> DataList { get; set; }
 
         public ErrorViewModel? Error { get; set; }
     }
