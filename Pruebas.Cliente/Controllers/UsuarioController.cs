@@ -1,7 +1,9 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Irony.Parsing;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query;
 using Pruebas.Cliente.Interface;
 using Pruebas.Cliente.Models;
 using Pruebas.Cliente.Utilidades;
@@ -16,10 +18,18 @@ namespace Pruebas.Cliente.Controllers
         {
             _usuario = usuario;
         }
-        public async Task <IActionResult> Index(string? nombreUsuario, int pageNumber)
+
+        public async Task<IActionResult> Index(string? nombreUsuario, int pageNumber)
         {
-            int pageSize = 3;
-            
+            int pageSize = 5;
+
+            ViewBag.Busqueda = nombreUsuario;
+
+            if (string.IsNullOrEmpty(nombreUsuario))
+            {
+                nombreUsuario = string.Empty;
+            }
+
             if(pageNumber == 0)
             {
                 pageNumber = 1;
@@ -155,17 +165,19 @@ namespace Pruebas.Cliente.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ExportarTabla()
-        {
+        //[HttpPost]
+        public async Task<IActionResult> ExportarExcel(string? nombreUsuario)
+        {            
             string excelName = $"Usuarios-{DateTime.Now:yyyyMMddHHmmss}.xlsx";
 
-            try
+            if (string.IsNullOrEmpty(nombreUsuario))
             {
-                var response = new ResponseViewModel<TblUsuario>();
-                
-                var lstUsuario = await _usuario.ObtenerUsuarios(string.Empty, 1, 1);
-                response.DataList = lstUsuario;
+                nombreUsuario = string.Empty;
+            }
+
+            try
+            {                
+                var lstUsuario = await _usuario.ObtenerUsuariosToList(nombreUsuario);             
 
                 using (var workbook = new XLWorkbook())
                 {
@@ -183,7 +195,7 @@ namespace Pruebas.Cliente.Controllers
 
                     int row = 2;
                     // Añadir los datos                    
-                    foreach (var usuario in response.DataList)
+                    foreach (var usuario in lstUsuario)
                     {
                         worksheet.Cell(row, 1).Value = usuario.IdUsuario;
                         worksheet.Cell(row, 2).Value = usuario.Nombre;
@@ -220,6 +232,8 @@ namespace Pruebas.Cliente.Controllers
                 {
                     return BadRequest("No se ha proporcionado un archivo.");
                 }
+
+                var response = new ResponseViewModel<TblUsuario>();
 
                 var usuarios = new List<TblUsuario>();
 
@@ -262,13 +276,17 @@ namespace Pruebas.Cliente.Controllers
                 }    
                 // Guardar los productos en la base de datos
                 _usuario.AgregarUsuarios(usuarios);
-                return RedirectToAction("Index", null);
+                
+                var lstUsuario = await _usuario.ObtenerUsuarios(string.Empty, 1, 5);
+                response.DataList = lstUsuario;
+                response.Message = "Usuarios encontrados";
+                
+                return PartialView("UsuariosPartialView", response);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
         }
     }
 }

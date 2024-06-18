@@ -43,6 +43,18 @@ namespace Pruebas.Cliente.Repositorio
             }
         }
 
+        public async Task<List<TblUsuario>> ObtenerUsuariosToList(string nombreUsuario)
+        {
+            try
+            {
+                return await _dbContext.TblUsuarios.Where(x => x.Nombre.Contains(nombreUsuario)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }        
+
         public TblUsuario ActualizarUsuarios(TblUsuario usr)
         {
             try

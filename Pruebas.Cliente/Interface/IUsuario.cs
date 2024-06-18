@@ -9,6 +9,8 @@ namespace Pruebas.Cliente.Interface
 
         public TblUsuario ObtenerUsuarios(int idUsuario);
 
+        public Task<List<TblUsuario>> ObtenerUsuariosToList(string nombreUsuario);        
+
         public TblUsuario ActualizarUsuarios(TblUsuario usr);
 
         public TblUsuario AgregarUsuario(TblUsuario usr);

@@ -1,0 +1,42 @@
+﻿@using Pruebas.Cliente.Utilidades
+@model ResponseViewModel<TblUsuario>;
+
+<table id="resultsTable" class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Identificacion</th>
+            <th>Cargo</th>
+            <th>Activo</th>
+            <th>Fecha Creacion</th>
+            <td>Actualizar</td>
+            <td>Eliminar</td>
+            <!-- Agrega más columnas según las propiedades de TblUsuario -->
+        </tr>
+    </thead>
+    <tbody id="userData">
+        @foreach (var usuario in Model.DataList)
+        {
+            <tr>
+                <td>@usuario.IdUsuario</td>
+                <td>@usuario.Nombre</td>
+                <td>@usuario.ApellidoPaterno</td>
+                <td>@usuario.ApellidoMaterno</td>
+                <td>@usuario.Identificacion</td>
+                <td>@usuario.Cargo</td>
+                <td>@usuario.Activo</td>
+                <td>@usuario.FechaCreacionDateOnly.ToShortDateString()</td>
+                <td>
+                    <a asp-controller="Usuario" asp-action="EditarUsuario" asp-route-id="@usuario.IdUsuario">Actualizar</a>
+                </td>
+                <td>
+                    <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-id="@usuario.IdUsuario">Eliminar</a>
+                </td>
+                <!-- Agrega más columnas según las propiedades de TblUsuario -->
+            </tr>
+        }
+    </tbody>
+</table>
