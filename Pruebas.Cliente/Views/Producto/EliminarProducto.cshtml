@@ -40,7 +40,7 @@
 
         <div class="form-group col-md-3">
             <label for="lblFechaCreacion">Fecha Creacion:</label>
-            <input type="text" class="form-control" id="txtFechaCreacion" name="FechaCreacion" value="@Model.FechaCreacion" readonly />
+            <input type="text" class="form-control" id="txtFechaCreacion" name="FechaCreacion" value="@Model.FechaCreacionDateOnly.ToShortDateString()" readonly />
         </div>
     </div>
 
@@ -86,12 +86,12 @@
 
     <script>
 
-        $(document).ready(function () {
-            $('#txtFechaCreacion').datepicker({
-                dateFormat: 'dd-mm-yy',
-                autoclose: true
-            });
-        });
+        // $(document).ready(function () {
+        //     $('#txtFechaCreacion').datepicker({
+        //         dateFormat: 'dd-mm-yy',
+        //         autoclose: true
+        //     });
+        // });
 
 
         function mostrarModal() {
@@ -109,25 +109,23 @@
                     data: data,
                     success: function (response) {
 
-                        //var responseData = JSON.parse(response);
-
-                        // Selecciona el elemento por su ID
                         var successDiv = document.getElementById('successMensaje');
+                        var errorDiv = document.getElementById('errorMensaje');
 
-                        // Cambia el texto del elemento
-                        successDiv.textContent = "Se elimino el registro";
-                        successDiv.style.display = 'block';
-
-
+                        if (response.success) {
+                            successDiv.textContent = response.message;
+                            successDiv.style.display = 'block';
+                        } else {
+                            errorDiv.textContent = response.message;
+                            errorDiv.style.display = 'block';
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.log(error);
                     }
                 });
             });
-
-        }
-       
+        }       
        
     </script>
 }

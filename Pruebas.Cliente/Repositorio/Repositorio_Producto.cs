@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pruebas.Cliente.Interface;
 using Pruebas.Cliente.Models;
+using Pruebas.Cliente.Utilidades;
 
 namespace Pruebas.Cliente.Repositorio
 {
@@ -11,13 +12,13 @@ namespace Pruebas.Cliente.Repositorio
         public Repositorio_Producto(MvcContext dbContext)
         {
             _dbContext = dbContext;
-        }
+        }    
 
-        public List<TblProducto> ObtenerProductos(string? nombreProducto)
+        public async Task<PaginatedList<TblProducto>> ObtenerProductos(string? nombreProducto, int pageNumber, int pageSize)
         {
             try
             {
-                return _dbContext.TblProductos.Where(x => x.Nombre.Contains(nombreProducto)).ToList();
+                return await PaginatedList<TblProducto>.CreateAsync(_dbContext.TblProductos.AsNoTracking().Where(x => x.Nombre.Contains(nombreProducto)), pageNumber, pageSize);                
             }
             catch (Exception ex)
             {

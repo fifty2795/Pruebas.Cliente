@@ -1,4 +1,5 @@
-﻿@model IEnumerable<TblProducto>;
+﻿@using Pruebas.Cliente.Utilidades
+@model ResponseViewModel<TblProducto>;
 
 <h1>Lista de Productos</h1>
 <br />
@@ -31,12 +32,12 @@
 
 </form>
 
-<button id="btnAgregarProducto" class="btn btn-primary">Agregar Producto</button>
+<a asp-controller="Producto" asp-action="AgregarProducto" class="btn btn-primary">Agregar Producto</a>
 
 <br />
 
 
-<table class="table">
+<table id="resultsTable" class="table">
     <thead>
         <tr>
             <th>ID</th>
@@ -52,7 +53,7 @@
         </tr>
     </thead>
     <tbody id="userData">
-        @foreach (var producto in Model)
+        @foreach (var producto in Model.DataList)
         {
             <tr>
                 <td>@producto.IdProducto</td>
@@ -60,7 +61,7 @@
                 <td>@producto.Detalle</td>
                 <td>@producto.Precio</td>
                 <td>@producto.Cantidad</td>
-                <td>@producto.FechaCreacion</td>
+                <td>@producto.FechaCreacionDateOnly.ToShortDateString()</td>
                 <td>@producto.Activo</td>
                 <td>
                     <a asp-controller="producto" asp-action="EditarProducto" asp-route-id="@producto.IdProducto">Actualizar</a>
@@ -73,3 +74,55 @@
         }
     </tbody>
 </table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item @(Model.DataList.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link" href="?pageNumber=@(Model.DataList.PageIndex - 1)">Previous</a>
+        </li>
+        @for (int i = 1; i <= Model.DataList.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.DataList.PageIndex ? "active" : "")">
+                <a class="page-link" href="?pageNumber=@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.DataList.HasNextPage ? "" : "disabled")">
+            <a class="page-link" href="?pageNumber=@(Model.DataList.PageIndex + 1)">Next</a>
+        </li>
+    </ul>
+</nav>
+
+
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+
+            document.getElementById('searchInput').addEventListener('input', function () {
+                var searchTerm = this.value.toLowerCase();
+                var table = document.getElementById('resultsTable');
+                var rows = table.getElementsByTagName('tr');
+
+                for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+                    var cells = rows[i].getElementsByTagName('td');
+                    var found = false;
+
+                    for (var j = 0; j < cells.length; j++) {
+                        if (cells[j].textContent.toLowerCase().includes(searchTerm)) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            });
+
+        });
+
+    </script>
+}

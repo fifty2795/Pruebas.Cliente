@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Pruebas.Cliente.Models;
+namespace Prueba.Core.Models;
 
 public partial class TblProducto
 {
@@ -15,9 +15,7 @@ public partial class TblProducto
 
     public int? Cantidad { get; set; }
 
-    public DateTime FechaCreacion { get; set; }
+    public DateTime? FechaCreacion { get; set; }
 
-    public DateTime FechaCreacionDateOnly => FechaCreacion.Date;
-
-    public bool Activo { get; set; }
+    public bool? Activo { get; set; }
 }
